@@ -1,0 +1,13 @@
+---
+ setup.py |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/setup.py
++++ b/setup.py
+@@ -53,5 +53,5 @@ setup(name='thefuck',
+       install_requires=install_requires,
+       extras_require=extras_require,
+       entry_points={'console_scripts': [
+-          'thefuck = thefuck.entrypoints.main:main',
++          'thefuck.real = thefuck.entrypoints.main:main',
+           'fuck = thefuck.entrypoints.not_configured:main']})
