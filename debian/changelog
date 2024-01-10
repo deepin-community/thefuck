@@ -1,5 +1,87 @@
-template-repository (1.0-1) unstable; urgency=medium
+thefuck (3.29-0.3) unstable; urgency=medium
 
-  * Initial release
+  * Non-maintainer upload.
+  * Add debian/patches/0002-CVE-2021-34363.patch to fix possible changes in
+    files outside of working directory. (Closes: #989989, CVE-2021-34363)
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Francisco Vilmar Cardoso Ruviaro <francisco.ruviaro@riseup.net>  Fri, 18 Jun 2021 23:36:23 +0000
+
+thefuck (3.29-0.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add missing Depends 'python3-distutils' on thefuck. (Closes: #946447)
+
+ -- Francisco Vilmar Cardoso Ruviaro <francisco.ruviaro@riseup.net>  Wed, 09 Jun 2021 23:10:07 +0000
+
+thefuck (3.29-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * New upstream release, to migrate to python 3; Closes: #897603
+    - move from python2 to python3, switch to pybuild too
+  * debian/copyright
+    - update to reflect new upstream release
+  * debian/control
+    - update Vcs-* fields to point to Salsa
+    - drop outdated X-P-V field
+    - bump Standards-Version to 4.4.0 (no changes needed)
+
+ -- Sandro Tosi <morph@debian.org>  Thu, 22 Aug 2019 18:15:36 -0400
+
+thefuck (3.11-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add the missing dependency on python-pkg-resources.
+    (Closes: #842393)
+
+ -- Adrian Bunk <bunk@debian.org>  Sat, 12 May 2018 10:22:28 +0300
+
+thefuck (3.11-2) unstable; urgency=medium
+
+  * Depend on python-pathlib2 instead of python-pathlib.
+    Thanks to Axel Beckert for the patch (Closes: #836748)
+
+ -- Alessio Treglia <alessio@debian.org>  Wed, 05 Oct 2016 07:24:14 +0100
+
+thefuck (3.11-1) unstable; urgency=medium
+
+  * Imported Upstream version 3.11
+  * Dropped 1001-fix_memoize.patch, applied upstream
+  * Refresh patches.
+  * Move under Section utils. Closes: #820384
+  * Bump Standards
+
+ -- Alessio Treglia <alessio@debian.org>  Mon, 29 Aug 2016 14:03:01 +0100
+
+thefuck (3.2-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Drop patch for XDG compliance.
+  * Add patch to fix wrong handling of logic operator in thefuck/utils.py.
+
+ -- Alessio Treglia <alessio@debian.org>  Wed, 04 Nov 2015 23:17:13 +0000
+
+thefuck (3.1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Depends on python-decorator.
+  * Refresh patches:
+    - debian/patches/0001-clean_scripts_install.patch
+    - debian/patches/0003-xdg_config_dir.patch
+  * Drop debian/patches/0002-disable_sudo_correction.patch:
+    - The program asks for confirmatiom by default before fixing
+      the previous command.
+
+ -- Alessio Treglia <alessio@debian.org>  Mon, 02 Nov 2015 01:46:20 +0000
+
+thefuck (2.5.6-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Refresh patches.
+
+ -- Alessio Treglia <alessio@debian.org>  Thu, 30 Jul 2015 12:15:46 +0100
+
+thefuck (1.46-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #783816)
+
+ -- Alessio Treglia <alessio@debian.org>  Wed, 17 Jun 2015 17:44:55 +0100
