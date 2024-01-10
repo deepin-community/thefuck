@@ -1,15 +1,33 @@
-Source: template-repository
-Section: unknown
+Source: thefuck
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Section: utils
+Maintainer: Alessio Treglia <alessio@debian.org>
+Build-Depends:
+ debhelper (>= 9~),
+ dh-python,
+ python3,
+ python3-setuptools,
+ python3-pyte,
+Standards-Version: 4.4.0
+Homepage: https://github.com/nvbn/thefuck
+Vcs-Git: https://salsa.debian.org/debian/thefuck.git
+Vcs-Browser: https://salsa.debian.org/debian/thefuck
 
-Package: template-repository
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: thefuck
+Architecture: all
+Depends:
+ ${python3:Depends},
+ ${misc:Depends},
+ python3-colorama,
+ python3-decorator,
+ python3-distutils,
+ python3-pkg-resources,
+ python3-psutil,
+ python3-six
+Description: spelling corrector of console commands
+ The Fuck attempts to fix user's command line mistakes, by
+ composing new commands applying a series of matching rules.
+ It supports various shells, such as bash, fish, tcsh, and
+ zsh.
+ .
+ The 'sudo' matching rule has been disabled for users' safety.
