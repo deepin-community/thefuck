@@ -4,7 +4,7 @@
 
 --- a/setup.py
 +++ b/setup.py
-@@ -53,5 +53,5 @@ setup(name='thefuck',
+@@ -54,5 +54,5 @@
        install_requires=install_requires,
        extras_require=extras_require,
        entry_points={'console_scripts': [

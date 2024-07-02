@@ -41,10 +41,16 @@ class TestCorrectedCommand(object):
         settings.update(override_settings)
         CorrectedCommand(script, None, 1000).run(Command(script, ''))
         out, _ = capsys.readouterr()
-        assert out[:-1] == printed
+        assert out == printed
 
 
 class TestRule(object):
+    def test_from_path_rule_exception(self, mocker):
+        load_source = mocker.patch('thefuck.types.load_source',
+                                   side_effect=ImportError("No module named foo..."))
+        assert Rule.from_path(Path('git.py')) is None
+        load_source.assert_called_once_with('git', 'git.py')
+
     def test_from_path(self, mocker):
         match = object()
         get_new_command = object()
@@ -60,20 +66,22 @@ class TestRule(object):
                 == Rule('bash', match, get_new_command, priority=900))
         load_source.assert_called_once_with('bash', rule_path)
 
-    @pytest.mark.parametrize('rules, exclude_rules, rule, is_enabled', [
-        (const.DEFAULT_RULES, [], Rule('git', enabled_by_default=True), True),
-        (const.DEFAULT_RULES, [], Rule('git', enabled_by_default=False), False),
-        ([], [], Rule('git', enabled_by_default=False), False),
-        ([], [], Rule('git', enabled_by_default=True), False),
-        (const.DEFAULT_RULES + ['git'], [], Rule('git', enabled_by_default=False), True),
-        (['git'], [], Rule('git', enabled_by_default=False), True),
-        (const.DEFAULT_RULES, ['git'], Rule('git', enabled_by_default=True), False),
-        (const.DEFAULT_RULES, ['git'], Rule('git', enabled_by_default=False), False),
-        ([], ['git'], Rule('git', enabled_by_default=True), False),
-        ([], ['git'], Rule('git', enabled_by_default=False), False)])
-    def test_is_enabled(self, settings, rules, exclude_rules, rule, is_enabled):
-        settings.update(rules=rules,
-                        exclude_rules=exclude_rules)
+    def test_from_path_excluded_rule(self, mocker, settings):
+        load_source = mocker.patch('thefuck.types.load_source')
+        settings.update(exclude_rules=['git'])
+        rule_path = os.path.join(os.sep, 'rules', 'git.py')
+        assert Rule.from_path(Path(rule_path)) is None
+        assert not load_source.called
+
+    @pytest.mark.parametrize('rules, rule, is_enabled', [
+        (const.DEFAULT_RULES, Rule('git', enabled_by_default=True), True),
+        (const.DEFAULT_RULES, Rule('git', enabled_by_default=False), False),
+        ([], Rule('git', enabled_by_default=False), False),
+        ([], Rule('git', enabled_by_default=True), False),
+        (const.DEFAULT_RULES + ['git'], Rule('git', enabled_by_default=False), True),
+        (['git'], Rule('git', enabled_by_default=False), True)])
+    def test_is_enabled(self, settings, rules, rule, is_enabled):
+        settings.update(rules=rules)
         assert rule.is_enabled == is_enabled
 
     def test_isnt_match(self):
@@ -131,10 +139,13 @@ class TestCommand(object):
                                       env=os_environ)
 
     @pytest.mark.parametrize('script, result', [
+        ([], None),
         ([''], None),
         (['', ''], None),
         (['ls', '-la'], 'ls -la'),
-        (['ls'], 'ls')])
+        (['ls'], 'ls'),
+        (['echo \\ '], 'echo \\ '),
+        (['echo \\\n'], 'echo \\\n')])
     def test_from_script(self, script, result):
         if result:
             assert Command.from_raw_script(script).script == result

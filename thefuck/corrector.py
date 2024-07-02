@@ -15,7 +15,7 @@ def get_loaded_rules(rules_paths):
     for path in rules_paths:
         if path.name != '__init__.py':
             rule = Rule.from_path(path)
-            if rule.is_enabled:
+            if rule and rule.is_enabled:
                 yield rule
 
 
@@ -71,7 +71,7 @@ def organize_commands(corrected_commands):
         without_duplicates,
         key=lambda corrected_command: corrected_command.priority)
 
-    logs.debug('Corrected commands: '.format(
+    logs.debug(u'Corrected commands: {}'.format(
         ', '.join(u'{}'.format(cmd) for cmd in [first_command] + sorted_commands)))
 
     for command in sorted_commands:
