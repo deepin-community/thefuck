@@ -1,3 +1,20 @@
+thefuck (3.32-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * New upstream version
+  * Add dependency on python3-zombie-imp (LP: #2065530)
+  * Remove need for python3-distutilts (Closes: #1065984, LP: #1875178)
+  * Enable most tests in local build,
+    add dependency on python3-mock & python3-pytest,
+    the tests still fail in a clean buildd
+  * Standards-Version: 4.7.0 (routine-update)
+  * Build-Depends: s/dh-python/dh-sequence-python3/ (routine-update)
+  * Rules-Requires-Root: no (routine-update)
+  * Watch file standard 4 (routine-update)
+  * Refresh patches
+
+ -- Alexandre Detiste <tchet@debian.org>  Mon, 01 Jul 2024 15:49:19 +0200
+
 thefuck (3.29-0.3) unstable; urgency=medium
 
   * Non-maintainer upload.

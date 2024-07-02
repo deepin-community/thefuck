@@ -1,4 +1,4 @@
-# The Fuck [![Version][version-badge]][version-link] [![Build Status][travis-badge]][travis-link] [![Windows Build Status][appveyor-badge]][appveyor-link] [![Coverage][coverage-badge]][coverage-link] [![MIT License][license-badge]](LICENSE.md)
+# The Fuck [![Version][version-badge]][version-link] [![Build Status][workflow-badge]][workflow-link] [![Coverage][coverage-badge]][coverage-link] [![MIT License][license-badge]](LICENSE.md)
 
 *The Fuck* is a magnificent app, inspired by a [@liamosaur](https://twitter.com/liamosaur/)
 [tweet](https://twitter.com/liamosaur/status/506975850596536320),
@@ -91,15 +91,30 @@ Reading package lists... Done
 ...
 ```
 
+## Contents
+
+1. [Requirements](#requirements)
+2. [Installations](#installation)
+3. [Updating](#updating)
+4. [How it works](#how-it-works)
+5. [Creating your own rules](#creating-your-own-rules)
+6. [Settings](#settings)
+7. [Third party packages with rules](#third-party-packages-with-rules)
+8. [Experimental instant mode](#experimental-instant-mode)
+9. [Developing](#developing)
+10. [License](#license-mit)
+
 ## Requirements
 
 - python (3.4+)
 - pip
 - python-dev
 
+##### [Back to Contents](#contents)
+
 ## Installation
 
-On OS X, you can install *The Fuck* via [Homebrew][homebrew] (or via [Linuxbrew][linuxbrew] on Linux):
+On macOS or Linux, you can install *The Fuck* via [Homebrew][homebrew]:
 
 ```bash
 brew install thefuck
@@ -109,7 +124,7 @@ On Ubuntu / Mint, install *The Fuck* with the following commands:
 ```bash
 sudo apt update
 sudo apt install python3-dev python3-pip python3-setuptools
-sudo pip3 install thefuck
+pip3 install thefuck --user
 ```
 
 On FreeBSD, install *The Fuck* with the following commands:
@@ -145,7 +160,7 @@ eval $(thefuck --alias FUCK)
 Changes are only available in a new shell session. To make changes immediately
 available, run `source ~/.bashrc` (or your shell config file like `.zshrc`).
 
-To run fixed commands without confirmation, use the `--yeah` option (or just `-y` for short):
+To run fixed commands without confirmation, use the `--yeah` option (or just `-y` for short, or `--hard` if you're especially frustrated):
 
 ```bash
 fuck --yeah
@@ -157,6 +172,8 @@ To fix commands recursively until succeeding, use the `-r` option:
 fuck -r
 ```
 
+##### [Back to Contents](#contents)
+
 ## Updating
 
 ```bash
@@ -164,6 +181,12 @@ pip3 install thefuck --upgrade
 ```
 
 **Note: Alias functionality was changed in v1.34 of *The Fuck***
+
+## Uninstall
+
+To remove *The Fuck*, reverse the installation process:
+- erase or comment *thefuck* alias line from your Bash, Zsh, Fish, Powershell, tcsh, ... shell config
+- use your package manager (brew, pip3, pkg, crew, pip) to uninstall the binaries
 
 ## How it works
 
@@ -179,10 +202,14 @@ following rules are enabled by default:
 * `cargo_no_command` &ndash; fixes wrongs commands like `cargo buid`;
 * `cat_dir` &ndash; replaces `cat` with `ls` when you try to `cat` a directory;
 * `cd_correction` &ndash; spellchecks and correct failed cd commands;
+* `cd_cs` &ndash; changes `cs` to `cd`;
 * `cd_mkdir` &ndash; creates directories before cd'ing into them;
 * `cd_parent` &ndash; changes `cd..` to `cd ..`;
 * `chmod_x` &ndash; add execution bit;
+* `choco_install` &ndash; append common suffixes for chocolatey packages;
 * `composer_not_command` &ndash; fixes composer command name;
+* `conda_mistype` &ndash; fixes conda commands;
+* `cp_create_destination` &ndash; creates a new directory when you attempt to `cp` or `mv` to a non existent one
 * `cp_omitting_directory` &ndash; adds `-a` when you `cp` directory;
 * `cpp11` &ndash; adds missing `-std=c++11` to `g++` or `clang++`;
 * `dirty_untar` &ndash; fixes `tar x` command that untarred in the current directory;
@@ -191,6 +218,7 @@ following rules are enabled by default:
 * `django_south_merge` &ndash; adds `--merge` to inconsistent django south migration;
 * `docker_login` &ndash; executes a `docker login` and repeats the previous command;
 * `docker_not_command` &ndash; fixes wrong docker commands like `docker tags`;
+* `docker_image_being_used_by_container` &dash; removes the container that is using the image before removing the image;
 * `dry` &ndash; fixes repetitions like `git git push`;
 * `fab_command_not_found` &ndash; fix misspelled fabric commands;
 * `fix_alt_space` &ndash; replaces Alt+Space with Space character;
@@ -200,9 +228,13 @@ following rules are enabled by default:
 * `git_add_force` &ndash; adds `--force` to `git add <pathspec>...` when paths are .gitignore'd;
 * `git_bisect_usage` &ndash; fixes `git bisect strt`, `git bisect goood`, `git bisect rset`, etc. when bisecting;
 * `git_branch_delete` &ndash; changes `git branch -d` to `git branch -D`;
+* `git_branch_delete_checked_out` &ndash; changes `git branch -d` to `git checkout master && git branch -D` when trying to delete a checked out branch;
 * `git_branch_exists` &ndash; offers `git branch -d foo`, `git branch -D foo` or `git checkout foo` when creating a branch that already exists;
 * `git_branch_list` &ndash; catches `git branch list` in place of `git branch` and removes created branch;
+* `git_branch_0flag` &ndash; fixes commands such as `git branch 0v` and `git branch 0r` removing the created branch;
 * `git_checkout` &ndash; fixes branch name or creates new branch;
+* `git_clone_git_clone` &ndash; replaces `git clone git clone ...` with `git clone ...`
+* `git_commit_add` &ndash; offers `git commit -a ...` or `git commit -p ...` after previous commit if it failed because nothing was staged;
 * `git_commit_amend` &ndash; offers `git commit --amend` after previous commit;
 * `git_commit_reset` &ndash; offers `git reset HEAD~` after previous commit;
 * `git_diff_no_index` &ndash; adds `--no-index` to previous `git diff` on untracked files;
@@ -210,6 +242,9 @@ following rules are enabled by default:
 * `git_fix_stash` &ndash; fixes `git stash` commands (misspelled subcommand and missing `save`);
 * `git_flag_after_filename` &ndash; fixes `fatal: bad flag '...' after filename`
 * `git_help_aliased` &ndash; fixes `git help <alias>` commands replacing <alias> with the aliased command;
+* `git_hook_bypass` &ndash; adds `--no-verify` flag previous to `git am`, `git commit`, or `git push` command;
+* `git_lfs_mistype` &ndash; fixes mistyped `git lfs <command>` commands;
+* `git_main_master` &ndash; fixes incorrect branch name between `main` and `master`
 * `git_merge` &ndash; adds remote to branch names;
 * `git_merge_unrelated` &ndash; adds `--allow-unrelated-histories` when required
 * `git_not_command` &ndash; fixes wrong git commands like `git brnch`;
@@ -217,7 +252,7 @@ following rules are enabled by default:
 * `git_pull_clone` &ndash; clones instead of pulling when the repo does not exist;
 * `git_pull_uncommitted_changes` &ndash; stashes changes before pulling and pops them afterwards;
 * `git_push` &ndash; adds `--set-upstream origin $branch` to previous failed `git push`;
-* `git_push_different_branch_names` &ndash; fixes pushes when local brach name does not match remote branch name;
+* `git_push_different_branch_names` &ndash; fixes pushes when local branch name does not match remote branch name;
 * `git_push_pull` &ndash; runs `git pull` when `push` was rejected;
 * `git_push_without_commits` &ndash; Creates an initial commit if you forget and only `git add .`, when setting up a new project;
 * `git_rebase_no_changes` &ndash; runs `git rebase --skip` instead of `git rebase --continue` when there are no changes;
@@ -226,12 +261,13 @@ following rules are enabled by default:
 * `git_rm_recursive` &ndash; adds `-r` when you try to `rm` a directory;
 * `git_rm_staged` &ndash;  adds `-f` or `--cached` when you try to `rm` a file with staged changes
 * `git_rebase_merge_dir` &ndash; offers `git rebase (--continue | --abort | --skip)` or removing the `.git/rebase-merge` dir when a rebase is in progress;
-* `git_remote_seturl_add` &ndash; runs `git remote add` when `git remote set_url` on nonexistant remote;
+* `git_remote_seturl_add` &ndash; runs `git remote add` when `git remote set_url` on nonexistent remote;
 * `git_stash` &ndash; stashes your local modifications before rebasing or switching branch;
 * `git_stash_pop` &ndash; adds your local modifications before popping stash, then resets;
 * `git_tag_force` &ndash; adds `--force` to `git tag <tagname>` when the tag already exists;
 * `git_two_dashes` &ndash; adds a missing dash to commands like `git commit -amend` or `git rebase -continue`;
 * `go_run` &ndash; appends `.go` extension when compiling/running Go programs;
+* `go_unknown_command` &ndash; fixes wrong `go` commands, for example `go bulid`;
 * `gradle_no_task` &ndash; fixes not found or ambiguous `gradle` task;
 * `gradle_wrapper` &ndash; replaces `gradle` with `./gradlew`;
 * `grep_arguments_order` &ndash; fixes `grep` arguments order for situations like `grep -lir . test`;
@@ -241,7 +277,7 @@ following rules are enabled by default:
 * `has_exists_script` &ndash; prepends `./` when script/binary exists;
 * `heroku_multiple_apps` &ndash; add `--app <app>` to `heroku` commands like `heroku pg`;
 * `heroku_not_command` &ndash; fixes wrong `heroku` commands like `heroku log`;
-* `history` &ndash; tries to replace command with most similar command from history;
+* `history` &ndash; tries to replace command with the most similar command from history;
 * `hostscli` &ndash; tries to fix `hostscli` usage;
 * `ifconfig_device_not_found` &ndash; fixes wrong device names like `wlan0` to `wlp2s0`;
 * `java` &ndash; removes `.java` extension when running Java programs;
@@ -256,50 +292,57 @@ following rules are enabled by default:
 * `man_no_space` &ndash; fixes man commands without spaces, for example `mandiff`;
 * `mercurial` &ndash; fixes wrong `hg` commands;
 * `missing_space_before_subcommand` &ndash; fixes command with missing space like `npminstall`;
-* `mkdir_p` &ndash; adds `-p` when you try to create a directory without parent;
+* `mkdir_p` &ndash; adds `-p` when you try to create a directory without a parent;
 * `mvn_no_command` &ndash; adds `clean package` to `mvn`;
-* `mvn_unknown_lifecycle_phase` &ndash; fixes misspelled lifecycle phases with `mvn`;
+* `mvn_unknown_lifecycle_phase` &ndash; fixes misspelled life cycle phases with `mvn`;
 * `npm_missing_script` &ndash; fixes `npm` custom script name in `npm run-script <script>`;
 * `npm_run_script` &ndash; adds missing `run-script` for custom `npm` scripts;
 * `npm_wrong_command` &ndash; fixes wrong npm commands like `npm urgrade`;
 * `no_command` &ndash; fixes wrong console commands, for example `vom/vim`;
 * `no_such_file` &ndash; creates missing directories with `mv` and `cp` commands;
+* `omnienv_no_such_command` &ndash; fixes wrong commands for `goenv`, `nodenv`, `pyenv` and `rbenv` (eg.: `pyenv isntall` or `goenv list`);
 * `open` &ndash; either prepends `http://` to address passed to `open` or create a new file or directory and passes it to `open`;
 * `pip_install` &ndash; fixes permission issues with `pip install` commands by adding `--user` or prepending `sudo` if necessary;
 * `pip_unknown_command` &ndash; fixes wrong `pip` commands, for example `pip instatl/pip install`;
 * `php_s` &ndash; replaces `-s` by `-S` when trying to run a local php server;
 * `port_already_in_use` &ndash; kills process that bound port;
 * `prove_recursively` &ndash; adds `-r` when called with directory;
-* `pyenv_no_such_command` &ndash; fixes wrong pyenv commands like `pyenv isntall` or `pyenv list`;
 * `python_command` &ndash; prepends `python` when you try to run non-executable/without `./` python script;
 * `python_execute` &ndash; appends missing `.py` when executing Python files;
+* `python_module_error` &ndash; fixes ModuleNotFoundError by trying to `pip install` that module;
 * `quotation_marks` &ndash; fixes uneven usage of `'` and `"` when containing args';
-* `path_from_history` &ndash; replaces not found path with similar absolute path from history;
+* `path_from_history` &ndash; replaces not found path with a similar absolute path from history;
+* `rails_migrations_pending` &ndash; runs pending migrations;
 * `react_native_command_unrecognized` &ndash; fixes unrecognized `react-native` commands;
-* `remove_trailing_cedilla` &ndash; remove trailling cedillas `ç`, a common typo for european keyboard layouts;
+* `remove_shell_prompt_literal` &ndash; remove leading shell prompt symbol `$`, common when copying commands from documentations;
+* `remove_trailing_cedilla` &ndash; remove trailing cedillas `ç`, a common typo for European keyboard layouts;
 * `rm_dir` &ndash; adds `-rf` when you try to remove a directory;
 * `scm_correction` &ndash; corrects wrong scm like `hg log` to `git log`;
 * `sed_unterminated_s` &ndash; adds missing '/' to `sed`'s `s` commands;
 * `sl_ls` &ndash; changes `sl` to `ls`;
 * `ssh_known_hosts` &ndash; removes host from `known_hosts` on warning;
-* `sudo` &ndash; prepends `sudo` to previous command if it failed because of permissions;
+* `sudo` &ndash; prepends `sudo` to the previous command if it failed because of permissions;
 * `sudo_command_from_user_path` &ndash; runs commands from users `$PATH` with `sudo`;
 * `switch_lang` &ndash; switches command from your local layout to en;
 * `systemctl` &ndash; correctly orders parameters of confusing `systemctl`;
+* `terraform_init.py` &ndash; run `terraform init` before plan or apply;
 * `test.py` &ndash; runs `py.test` instead of `test.py`;
 * `touch` &ndash; creates missing directories before "touching";
 * `tsuru_login` &ndash; runs `tsuru login` if not authenticated or session expired;
 * `tsuru_not_command` &ndash; fixes wrong `tsuru` commands like `tsuru shell`;
 * `tmux` &ndash; fixes `tmux` commands;
 * `unknown_command` &ndash; fixes hadoop hdfs-style "unknown command", for example adds missing '-' to the command on `hdfs dfs ls`;
-* `unsudo` &ndash; removes `sudo` from previous command if a process refuses to run on super user privilege.
+* `unsudo` &ndash; removes `sudo` from previous command if a process refuses to run on superuser privilege.
 * `vagrant_up` &ndash; starts up the vagrant instance;
 * `whois` &ndash; fixes `whois` command;
 * `workon_doesnt_exists` &ndash; fixes `virtualenvwrapper` env name os suggests to create new.
+* `wrong_hyphen_before_subcommand` &ndash; removes an improperly placed hyphen (`apt-install` -> `apt install`, `git-log` -> `git log`, etc.)
 * `yarn_alias` &ndash; fixes aliased `yarn` commands like `yarn ls`;
 * `yarn_command_not_found` &ndash; fixes misspelled `yarn` commands;
 * `yarn_command_replaced` &ndash; fixes replaced `yarn` commands;
 * `yarn_help` &ndash; makes it easier to open `yarn` documentation;
+
+##### [Back to Contents](#contents)
 
 The following rules are enabled by default on specific platforms only:
 
@@ -316,14 +359,19 @@ The following rules are enabled by default on specific platforms only:
 * `brew_unknown_command` &ndash; fixes wrong brew commands, for example `brew docto/brew doctor`;
 * `brew_update_formula` &ndash; turns `brew update <formula>` into `brew upgrade <formula>`;
 * `dnf_no_such_command` &ndash; fixes mistyped DNF commands;
+* `nixos_cmd_not_found` &ndash; installs apps on NixOS;
 * `pacman` &ndash; installs app with `pacman` if it is not installed (uses `yay` or `yaourt` if available);
+* `pacman_invalid_option` &ndash; replaces lowercase `pacman` options with uppercase.
 * `pacman_not_found` &ndash; fixes package name with `pacman`, `yay` or `yaourt`.
+* `yum_invalid_operation` &ndash; fixes invalid `yum` calls, like `yum isntall vim`;
 
 The following commands are bundled with *The Fuck*, but are not enabled by
 default:
 
 * `git_push_force` &ndash; adds `--force-with-lease` to a `git push` (may conflict with `git_push_pull`);
 * `rm_root` &ndash; adds `--no-preserve-root` to `rm -rf /` command.
+
+##### [Back to Contents](#contents)
 
 ## Creating your own rules
 
@@ -348,8 +396,8 @@ Your rule should not change `Command`.
 
 **Rules api changed in 3.0:** To access a rule's settings, import it with
  `from thefuck.conf import settings`
-  
-`settings` is a special object assembled from `~/.config/thefuck/settings.py`, 
+
+`settings` is a special object assembled from `~/.config/thefuck/settings.py`,
 and values from env ([see more below](#settings)).
 
 A simple example rule for running a script with `sudo`:
@@ -378,23 +426,26 @@ requires_output = True
 [utility functions for rules](https://github.com/nvbn/thefuck/tree/master/thefuck/utils.py),
 [app/os-specific helpers](https://github.com/nvbn/thefuck/tree/master/thefuck/specific/).
 
+##### [Back to Contents](#contents)
+
 ## Settings
 
 Several *The Fuck* parameters can be changed in the file `$XDG_CONFIG_HOME/thefuck/settings.py`
 (`$XDG_CONFIG_HOME` defaults to `~/.config`):
 
-* `rules` &ndash; list of enabled rules, by default `thefuck.conf.DEFAULT_RULES`;
+* `rules` &ndash; list of enabled rules, by default `thefuck.const.DEFAULT_RULES`;
 * `exclude_rules` &ndash; list of disabled rules, by default `[]`;
 * `require_confirmation` &ndash; requires confirmation before running new command, by default `True`;
-* `wait_command` &ndash; max amount of time in seconds for getting previous command output;
+* `wait_command` &ndash; the max amount of time in seconds for getting previous command output;
 * `no_colors` &ndash; disable colored output;
 * `priority` &ndash; dict with rules priorities, rule with lower `priority` will be matched first;
 * `debug` &ndash; enables debug output, by default `False`;
-* `history_limit` &ndash; numeric value of how many history commands will be scanned, like `2000`;
+* `history_limit` &ndash; the numeric value of how many history commands will be scanned, like `2000`;
 * `alter_history` &ndash; push fixed command to history, by default `True`;
 * `wait_slow_command` &ndash; max amount of time in seconds for getting previous command output if it in `slow_commands` list;
 * `slow_commands` &ndash; list of slow commands;
-* `num_close_matches` &ndash; maximum number of close matches to suggest, by default `3`.
+* `num_close_matches` &ndash; the maximum number of close matches to suggest, by default `3`.
+* `excluded_search_path_prefixes` &ndash; path prefixes to ignore when searching for commands, by default `[]`.
 
 An example of `settings.py`:
 
@@ -417,16 +468,17 @@ Or via environment variables:
 * `THEFUCK_RULES` &ndash; list of enabled rules, like `DEFAULT_RULES:rm_root` or `sudo:no_command`;
 * `THEFUCK_EXCLUDE_RULES` &ndash; list of disabled rules, like `git_pull:git_push`;
 * `THEFUCK_REQUIRE_CONFIRMATION` &ndash; require confirmation before running new command, `true/false`;
-* `THEFUCK_WAIT_COMMAND` &ndash; max amount of time in seconds for getting previous command output;
+* `THEFUCK_WAIT_COMMAND` &ndash; the max amount of time in seconds for getting previous command output;
 * `THEFUCK_NO_COLORS` &ndash; disable colored output, `true/false`;
 * `THEFUCK_PRIORITY` &ndash; priority of the rules, like `no_command=9999:apt_get=100`,
 rule with lower `priority` will be matched first;
 * `THEFUCK_DEBUG` &ndash; enables debug output, `true/false`;
 * `THEFUCK_HISTORY_LIMIT` &ndash; how many history commands will be scanned, like `2000`;
 * `THEFUCK_ALTER_HISTORY` &ndash; push fixed command to history `true/false`;
-* `THEFUCK_WAIT_SLOW_COMMAND` &ndash; max amount of time in seconds for getting previous command output if it in `slow_commands` list;
+* `THEFUCK_WAIT_SLOW_COMMAND` &ndash; the max amount of time in seconds for getting previous command output if it in `slow_commands` list;
 * `THEFUCK_SLOW_COMMANDS` &ndash; list of slow commands, like `lein:gradle`;
-* `THEFUCK_NUM_CLOSE_MATCHES` &ndash; maximum number of close matches to suggest, like `5`.
+* `THEFUCK_NUM_CLOSE_MATCHES` &ndash; the maximum number of close matches to suggest, like `5`.
+* `THEFUCK_EXCLUDED_SEARCH_PATH_PREFIXES` &ndash; path prefixes to ignore when searching for commands, by default `[]`.
 
 For example:
 
@@ -440,6 +492,8 @@ export THEFUCK_PRIORITY='no_command=9999:apt_get=100'
 export THEFUCK_HISTORY_LIMIT='2000'
 export THEFUCK_NUM_CLOSE_MATCHES='5'
 ```
+
+##### [Back to Contents](#contents)
 
 ## Third-party packages with rules
 
@@ -460,6 +514,8 @@ thefuck_contrib_foo
 
 *The Fuck* will find rules located in the `rules` module.
 
+##### [Back to Contents](#contents)
+
 ## Experimental instant mode
 
 The default behavior of *The Fuck* requires time to re-run previous commands.
@@ -479,6 +535,8 @@ For example:
 eval $(thefuck --alias --enable-experimental-instant-mode)
 ```
 
+##### [Back to Contents](#contents)
+
 ## Developing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -489,14 +547,13 @@ Project License can be found [here](LICENSE.md).
 
 [version-badge]:   https://img.shields.io/pypi/v/thefuck.svg?label=version
 [version-link]:    https://pypi.python.org/pypi/thefuck/
-[travis-badge]:    https://travis-ci.org/nvbn/thefuck.svg?branch=master
-[travis-link]:     https://travis-ci.org/nvbn/thefuck
-[appveyor-badge]:  https://ci.appveyor.com/api/projects/status/1sskj4imj02um0gu/branch/master?svg=true
-[appveyor-link]:   https://ci.appveyor.com/project/nvbn/thefuck
+[workflow-badge]:  https://github.com/nvbn/thefuck/workflows/Tests/badge.svg
+[workflow-link]:   https://github.com/nvbn/thefuck/actions?query=workflow%3ATests
 [coverage-badge]:  https://img.shields.io/coveralls/nvbn/thefuck.svg
 [coverage-link]:   https://coveralls.io/github/nvbn/thefuck
 [license-badge]:   https://img.shields.io/badge/license-MIT-007EC7.svg
 [examples-link]:   https://raw.githubusercontent.com/nvbn/thefuck/master/example.gif
 [instant-mode-gif-link]:   https://raw.githubusercontent.com/nvbn/thefuck/master/example_instant_mode.gif
 [homebrew]:        https://brew.sh/
-[linuxbrew]:       https://linuxbrew.sh/
+
+##### [Back to Contents](#contents)
